@@ -19,7 +19,7 @@ import {
   updateRoute } from './actions';
 
 console.log("this is a test");
-console.log("this is a test");
+console.log("this is a test2");
 
 const particleOptions = {
   particles: {

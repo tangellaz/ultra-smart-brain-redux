@@ -18,6 +18,8 @@ import {
   updateSignIn,
   updateRoute } from './actions';
 
+console.log("this is a test");
+
 const particleOptions = {
   particles: {
     number: {

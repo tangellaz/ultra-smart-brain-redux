@@ -72,9 +72,10 @@ class App extends Component {
   checkInput = (dataIn) => {
     const { flagChange } = this.props;
     if (typeof(dataIn) === "string" && dataIn !== "") {
+      const lwrDataIn = dataIn.toLowerCase()
       let ext = dataIn[dataIn.length-4] + dataIn[dataIn.length-3] + dataIn[dataIn.length-2] + dataIn[dataIn.length-1];
       ext = ext.toLowerCase();
-      if (ext === ".jpg" || ext === ".png" || ext === ".bmp") {
+      if (ext === ".jpg" || ext === ".png" || ext === ".bmp" || lwrDataIn.includes("jpg") || lwrDataIn.includes("png") || lwrDataIn.includes("bmp")) {
         flagChange(true);
         return true
       } else {

@@ -5,7 +5,8 @@ class Register extends React.Component {
 		this.state = {
 			email: '',
 			password: '',
-			name: ''
+			name: '',
+			fieldFlag: true
 		}
 	}
 	onNameChange = (event) => {
@@ -18,23 +19,35 @@ class Register extends React.Component {
 		this.setState({password: event.target.value})
 	}
 	onSubmitSignIn = () => {
-		fetch('https://boiling-sea-92403.herokuapp.com/register', {
-			method: 'post',
-			headers: {'Content-Type': 'application/json'},
-			body: JSON.stringify({
-				email: this.state.email,
-				password: this.state.password,
-				name: this.state.name
+		if (this.state.email !== "" && this.state.password !== "" && this.state.name !== "") {
+			fetch('https://boiling-sea-92403.herokuapp.com/register', {
+				method: 'post',
+				headers: {'Content-Type': 'application/json'},
+				body: JSON.stringify({
+					email: this.state.email,
+					password: this.state.password,
+					name: this.state.name
+				})
 			})
-		})
-		.then(response => response.json())
-		.then(user => {
-			if (user.id) {
-				this.props.loadUser(user);
-				this.props.onRouteChange('home');
-			}
-		})
+			.then(response => response.json())
+			.then(user => {
+				if (user.id) {
+					this.props.loadUser(user);
+					this.props.onRouteChange('home');
+				}
+			})
+		} else {
+			// console.log("missing fields")
+			this.setState({fieldFlag: false});
+		}
 	}
+
+	onKeyPress = (e) => {
+	    if(e.which === 13) {
+	      this.onSubmitSignIn()
+	    }
+  	}
+
 	render() {
 		return (
 		  <article className="br3 ba b--black-10 mv4 w-100 w-50-m w-25-l mw6 shadow-5 center">
@@ -48,6 +61,7 @@ class Register extends React.Component {
 			        	className="pa2 input-reset ba b--black bg-transparent hover-bg-black hover-white w-100" 
 			        	onChange={this.onNameChange}
 			        	type="text" name="name" id="name"
+			        	onKeyDown={this.onKeyPress}
 	        	  />
 			      </div>
 			      <div className="mt3">
@@ -56,6 +70,7 @@ class Register extends React.Component {
 			        	className="pa2 input-reset ba b--black bg-transparent hover-bg-black hover-white w-100" 
 			        	onChange={this.onEmailChange}
 			        	type="email" name="email-address" id="email-address"
+			        	onKeyDown={this.onKeyPress}
 		        	/>
 			      </div>
 			      <div className="mv3">
@@ -64,9 +79,19 @@ class Register extends React.Component {
 				        className="b pa2 input-reset ba b--black bg-transparent hover-bg-black hover-white w-100" 
 				        onChange={this.onPasswordChange}
 				        type="password" name="password" id="password"
+				        onKeyDown={this.onKeyPress}
 				    />
 			      </div>
 			    </fieldset>
+			    {this.state.fieldFlag === false
+			    	? 				
+				    <div>
+						<p className='f6 b dark-red'>
+						{'Please enter valid fields.'}
+						</p>
+					</div>
+					: null
+			    }
 			    <div className="">
 			      <input 
 				      onClick={this.onSubmitSignIn}

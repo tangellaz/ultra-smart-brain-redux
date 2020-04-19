@@ -5,7 +5,8 @@ import {
 	UPDATE_DATA,
 	URL_ENTERED,
 	SIGN_IN,
-	ROUTE
+	ROUTE,
+	DISPLAY_FLAG
 } from './constants.js'
 
 export const addFaceBox = (box) => ({
@@ -45,4 +46,9 @@ export const updateSignIn = (data) => ({
 export const updateRoute = (data) => ({
 	type: ROUTE,
 	payload: data
+})
+
+export const updateDisplayFlag = (bool) => ({
+	type: DISPLAY_FLAG,
+	payload: bool
 })

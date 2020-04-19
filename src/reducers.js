@@ -5,7 +5,8 @@ import {
 	UPDATE_DATA,
 	URL_ENTERED,
 	SIGN_IN,
-	ROUTE
+	ROUTE,
+	DISPLAY_FLAG
 } from './constants.js'
 
 const initialStateBox = {
@@ -57,12 +58,13 @@ export const userInfoUpdate = (state=initialStateUser, action={}) => {
 }
 
 const initialStateImageUrl = {
-	imageUrl: ''
+	imageUrl: '',
 }
 
 export const imageUrlUpdate = (state=initialStateImageUrl, action={}) => {
 	switch(action.type) {
 		case URL_ENTERED:
+			// return {...state, imageUrl: action.payload, inputCheck: true}
 			return Object.assign({}, state, {imageUrl: action.payload})
 		default:
 			return state;
@@ -91,6 +93,19 @@ export const routeUpdate = (state=initialStateRoute, action={}) => {
 		case ROUTE:
 			return Object.assign({}, state, {route: action.payload})
 		default:
+			return state;
+	}
+}
+
+const initialStateDisplayFlag = {
+	displayFlag: true
+}
+
+export const displayFlagUpdate = (state=initialStateDisplayFlag, action={}) => {
+	switch(action.type) {
+		case DISPLAY_FLAG:
+			return Object.assign({}, state, {displayFlag: action.payload})
+		default: 
 			return state;
 	}
 }

@@ -16,7 +16,8 @@ import {
   updateUserInfo,
   updateImageUrl,
   updateSignIn,
-  updateRoute } from './actions';
+  updateRoute,
+  updateDisplayFlag } from './actions';
 
 const particleOptions = {
   particles: {
@@ -37,7 +38,8 @@ const mapStateToProps = state => {
     user: state.userInfoUpdate.user,
     imageUrl: state.imageUrlUpdate.imageUrl,
     isSignedIn: state.signInUpdate.isSignedIn,
-    route: state.routeUpdate.route
+    route: state.routeUpdate.route,
+    displayFlag: state.displayFlagUpdate
   }
 }
 const mapDispatchToProps = (dispatch) => {
@@ -47,7 +49,8 @@ const mapDispatchToProps = (dispatch) => {
     loadUser: (data) => dispatch(updateUserInfo(data)),
     onImageUrlInput: (url) => dispatch(updateImageUrl(url)),
     signInChange: (bool) => dispatch(updateSignIn(bool)),
-    routeChange: (route) => dispatch(updateRoute(route))
+    routeChange: (route) => dispatch(updateRoute(route)),
+    flagChange: (bool) => dispatch(updateDisplayFlag(bool))
   }
 }
 
@@ -66,35 +69,61 @@ class App extends Component {
     }
   }
 
+  checkInput = (dataIn) => {
+    const { flagChange } = this.props;
+    if (typeof(dataIn) === "string" && dataIn !== "") {
+      let ext = dataIn[dataIn.length-4] + dataIn[dataIn.length-3] + dataIn[dataIn.length-2] + dataIn[dataIn.length-1];
+      ext = ext.toLowerCase();
+      if (ext === ".jpg" || ext === ".png" || ext === ".bmp") {
+        flagChange(true);
+        return true
+      } else {
+        // console.log("wrong image type")
+        flagChange(false);
+        return false
+      }
+    } else {
+        // console.log("else empty string");
+        flagChange(false);
+        return false
+    }
+  }
+
   onButtonSubmit = () => {
     const { displayFaceBox, input, onImageUrlInput, loadUser, user } = this.props;
-    onImageUrlInput(input);
-    fetch(' https://boiling-sea-92403.herokuapp.com/imageurl', {
-      method: 'post',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        input: input
+    const flag = this.checkInput(input);
+    console.log("flag=", flag)
+    if (flag) {
+      onImageUrlInput(input);
+      fetch(' https://boiling-sea-92403.herokuapp.com/imageurl', {
+        method: 'post',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          input: input
+        })
       })
-    })
-    .then(response => response.json())
-    .then(response => {
-      if (response) {
-        fetch(' https://boiling-sea-92403.herokuapp.com/image', {
-          method: 'put',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({
-            id: user.id
+      .then(response => response.json())
+      .then(response => {
+        if (response) {
+          fetch(' https://boiling-sea-92403.herokuapp.com/image', {
+            method: 'put',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              id: user.id
+            })
           })
-        })
-        .then(response => response.json())
-        .then(count => {
-          loadUser(count)
-        })
-        .catch(console.log)
-      }
-      displayFaceBox(this.calculateFaceLocation(response))
-    })
-    .catch(err => console.log(err));
+          .then(response => response.json())
+          .then(count => {
+            loadUser(count)
+          })
+          .catch(console.log)
+        }
+        displayFaceBox(this.calculateFaceLocation(response))
+      })
+      .catch(err => console.log(err));
+    } else {
+      console.log("Please enter url of image type jpg, png, bmp")
+    }
   }
 
   onRouteChange = (route) => {
@@ -110,8 +139,14 @@ class App extends Component {
     }
   }
 
+  onKeyPress = (e) => {
+    if(e.which === 13) {
+      this.onButtonSubmit()
+    }
+  }
+
   render() {
-    const { box, onInputChange, loadUser, user, imageUrl, isSignedIn, route } = this.props;
+    const { box, onInputChange, loadUser, user, imageUrl, isSignedIn, route, displayFlag } = this.props;
     return (
       <div className="App">
       <Particles className='particles'
@@ -124,8 +159,9 @@ class App extends Component {
             <ImageLinkForm
               onInputChange={onInputChange}
               onButtonSubmit={this.onButtonSubmit}
+              onKeyPress={this.onKeyPress}
             /> 
-            <FaceRecognition box={box} imageUrl={imageUrl}/>
+            <FaceRecognition box={box} imageUrl={imageUrl} displayFlag={displayFlag}/>
           </div>
         : (
             route === 'signin' 

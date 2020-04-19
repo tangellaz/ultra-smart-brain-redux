@@ -14,7 +14,8 @@ import {
 	userInfoUpdate,
 	imageUrlUpdate,
 	signInUpdate,
-	routeUpdate } from './reducers.js';
+	routeUpdate,
+	displayFlagUpdate } from './reducers.js';
 
 const logger = createLogger();
 const rootReducer = combineReducers({
@@ -23,7 +24,8 @@ const rootReducer = combineReducers({
 	userInfoUpdate,
 	imageUrlUpdate,
 	signInUpdate,
-	routeUpdate });
+	routeUpdate,
+	displayFlagUpdate });
 const store = createStore(
 	rootReducer,
 	applyMiddleware(thunkMiddleware, logger)
